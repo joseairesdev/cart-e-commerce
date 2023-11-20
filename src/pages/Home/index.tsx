@@ -1,12 +1,16 @@
-import { useState,useEffect } from 'react';
+import { useState,useEffect, useContext } from 'react';
 import { api } from '../../services/api';
 import * as C from './styled';
-import { BsCartPlus } from "react-icons/bs";
+import { BsCartPlus,BsCartDash } from "react-icons/bs";
 import { Products } from '../../types/Products';
+import { CartContext } from '../../context/cartContext';
+
 
 
 
 const Home = () => {
+
+  const {addItemCart,removeItemCart} = useContext(CartContext)
 
    const [products,setProducts] = useState<Products[]>([])
 
@@ -19,8 +23,14 @@ const Home = () => {
    useEffect(()=>{
     getProducts()
    },[])
+   
+   function handlerAddCartItem(item:Products){
+    addItemCart(item)
+   }
 
-  
+   function handlerRemoveCartItem(item:Products){
+    removeItemCart(item)
+   }
 
   return (
    <div>
@@ -34,15 +44,19 @@ const Home = () => {
           src={item.cover}/>
           <p className="font-medium mt-1 mb-2"> {item.title} </p>
           <div className="flex gap-3 items-center">
+          <button onClick={()=>handlerRemoveCartItem(item)}>
+            <BsCartDash size={25} color='#d48dd0' />
+           </button>
            <strong>
              {item.price.toLocaleString("pt-BR",{
               style:"currency",
               currency:"BRL"
              })}
            </strong>
-           <button>
+           <button onClick={()=>handlerAddCartItem(item)}>
             <BsCartPlus size={25} color='#d48dd0' />
            </button>
+         
           </div>
        </C.Container>
          ))}
